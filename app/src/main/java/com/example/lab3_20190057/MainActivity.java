@@ -19,12 +19,11 @@ import com.example.lab3_20190057.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AutoCompleteTextView spinnerCategoria;
+    private Spinner spinnerCategoria;
     private EditText editCantidad;
-    private AutoCompleteTextView spinnerDificultad;
+    private Spinner spinnerDificultad;
     private Button btnComprobar;
     private Button btnComenzar;
-
     private boolean conexionComprobada = false;
 
     // Resto de la clase...
@@ -35,25 +34,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Inicializar los componentes de la UI
-        AutoCompleteTextView spinnerCategoria = findViewById(R.id.spinner_categoria);
+        Spinner spinnerCategoria = findViewById(R.id.spinner_categoria);
         editCantidad = findViewById(R.id.edit_cantidad);
-        AutoCompleteTextView spinnerDificultad = findViewById(R.id.spinner_dificultad);
+        Spinner spinnerDificultad = findViewById(R.id.spinner_dificultad);
         btnComprobar = findViewById(R.id.btn_comprobar);
         btnComenzar = findViewById(R.id.btn_comenzar);
 
         // Configurar el adapter para el spinner de categorías
         ArrayAdapter<CharSequence> adapterCategoria = ArrayAdapter.createFromResource(
-                this, R.array.categorias, android.R.layout.simple_dropdown_item_1line);
-        adapterCategoria.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                this, R.array.categorias_con_placeholder, android.R.layout.simple_spinner_item);
+        adapterCategoria.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategoria.setAdapter(adapterCategoria);
-        spinnerCategoria.setDropDownBackgroundResource(android.R.color.white);
 
         // Configurar el adapter para el spinner de dificultad
         ArrayAdapter<CharSequence> adapterDificultad = ArrayAdapter.createFromResource(
-                this, R.array.dificultades, android.R.layout.simple_dropdown_item_1line);
-        adapterDificultad.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                this, R.array.dificultades_con_placeholder, android.R.layout.simple_spinner_item);
+        adapterDificultad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDificultad.setAdapter(adapterDificultad);
-        spinnerDificultad.setDropDownBackgroundResource(android.R.color.white);
 
         // Configurar los listeners para los botones
         btnComprobar.setOnClickListener(new View.OnClickListener() {
@@ -98,10 +95,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void comenzarJuego() {
-        // Obtener valores seleccionados
-        String categoria = spinnerCategoria.getText().toString().trim();
+        // Primero, verificar la conexión a internet nuevamente
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean tieneInternet = false;
+
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            tieneInternet = activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+
+        if (!tieneInternet) {
+            Toast.makeText(this, "Error: Se perdió la conexión a Internet", Toast.LENGTH_SHORT).show();
+            conexionComprobada = false;
+            btnComenzar.setEnabled(false);
+            return;
+        }
+
+        // Para la categoría
+        String categoria = "";
+        if (spinnerCategoria.getSelectedItemPosition() > 0) {
+            categoria = spinnerCategoria.getSelectedItem().toString();
+        } else {
+            Toast.makeText(this, "Por favor seleccione una categoría", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String cantidadStr = editCantidad.getText().toString().trim();
-        String dificultad = spinnerDificultad.getText().toString().trim();
+
+        // Para la dificultad
+        String dificultad = "";
+        if (spinnerDificultad.getSelectedItemPosition() > 0) {
+            dificultad = spinnerDificultad.getSelectedItem().toString();
+        } else {
+            Toast.makeText(this, "Por favor seleccione una dificultad", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Debug logs
         System.out.println("Categoría seleccionada: " + categoria);
@@ -176,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Si todo está bien, comenzar el juego
-        // Aquí deberías iniciar la nueva actividad (Ejercicio 2)
+        // Iniciar la nueva actividad (Ejercicio 2)
         // Crear un Intent para pasar a la siguiente actividad
         Intent intent = new Intent(MainActivity.this, TriviaActivity.class);
 
