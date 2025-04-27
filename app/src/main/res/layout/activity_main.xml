@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="55dp"
+        android:background="@drawable/bg_main_trivia">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="¡Bienvenido a TeleTrivia!"
+            android:textSize="42sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="La app diseñada para testear tu conocimiento y retar a tus amigos!"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="A continuación, elija los parámetros de juego"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+    </LinearLayout>
+
+    <!-- Contenedor del formulario con fondo verde pálido -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginHorizontal="32dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_main_green_trivia"
+        android:layout_marginTop="260dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"> <!-- Color verde pálido -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Categoría:"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:minWidth="100dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:hint="Categoría"
+                    app:expandedHintEnabled="false">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinner_categoria"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:background="#E8F5E9"
+                        android:completionHint="Seleccione una categoría"
+                        android:dropDownHeight="200dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cantidad:"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:minWidth="100dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_cantidad"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="# Preguntas"
+                        android:inputType="number"
+                        android:background="#E8F5E9" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dificultad:"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="12dp"
+                    android:minWidth="100dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:hint="Dificultad"
+                    app:expandedHintEnabled="false">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinner_dificultad"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:background="#E8F5E9"
+                        android:completionHint="Seleccione una dificultad"
+                        android:dropDownHeight="150dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_comprobar"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:text="Comprobar Conexión"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp"
+                app:cornerRadius="24dp"
+                android:backgroundTint="#3F51B5"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="16dp"
+                app:icon="@drawable/ic_warning" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_comenzar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Comenzar"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="20dp"
+                app:cornerRadius="24dp"
+                android:textColor="#FFFFFF"
+                android:enabled="false"
+                app:icon="@drawable/ic_arrow_right"
+                app:iconTint="@color/white"
+                app:iconSize="40dp"
+                app:iconPadding="0dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

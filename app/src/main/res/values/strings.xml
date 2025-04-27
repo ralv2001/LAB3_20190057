@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">LAB3_20190057</string>
+
+    <!-- Categorías -->
+    <string-array name="categorias">
+        <item>Cultura General</item>
+        <item>Libros</item>
+        <item>Películas</item>
+        <item>Música</item>
+        <item>Computación</item>
+        <item>Matemática</item>
+        <item>Deportes</item>
+        <item>Historia</item>
+    </string-array>
+
+    <!-- Dificultades -->
+    <string-array name="dificultades">
+        <item>fácil</item>
+        <item>medio</item>
+        <item>difícil</item>
+    </string-array>
+</resources>

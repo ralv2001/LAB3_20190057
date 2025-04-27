@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".TriviaActivity"
+    android:gravity="center_horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_header_trivia"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="¿Listo? ¡Juega!"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvCategoriaPreguntas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Knowledge"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_timer_container_trivia"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp">
+
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:text="Tiempo restante"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_timer_trivia"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_schedule"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/tv_timer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Aquí irá el resto de la UI para mostrar preguntas y respuestas -->
+
+    <TextView
+        android:id="@+id/tvNumeroPregunta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pregunta 1/3"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_timer_trivia"
+        android:gravity="center"
+        android:paddingHorizontal="40dp"
+        android:paddingVertical="12dp"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/tvPregunta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Popcorn was invented in 1871 by Frederick W. Rueckheim in the USA where he sold the snack on the streets of Chicago"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="36dp"
+        android:paddingHorizontal="30dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginVertical="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgRespuestaUsuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp">
+
+        <RadioButton
+            android:id="@+id/rbTrue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="True"
+            android:textStyle="bold"
+            android:textSize="20dp"/>
+
+        <RadioButton
+            android:id="@+id/rbFalse"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="False"
+            android:textStyle="bold"
+            android:textSize="20dp"/>
+
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_siguiente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Siguiente"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="40dp"
+        app:cornerRadius="24dp"
+        android:textColor="#FFFFFF"
+        android:enabled="false" />
+
+</LinearLayout>
