@@ -22,7 +22,7 @@ public class TriviaViewModel extends ViewModel {
     private MutableLiveData<String> error = new MutableLiveData<>();
 
     // Mapeo de categorías a sus IDs
-    private static final Map<String, Integer> CATEGORY_MAP = new HashMap<>();
+    public static final Map<String, Integer> CATEGORY_MAP = new HashMap<>();
     static {
         CATEGORY_MAP.put("Cultura General", 9);
         CATEGORY_MAP.put("Libros", 10);
@@ -51,58 +51,102 @@ public class TriviaViewModel extends ViewModel {
         isLoading.setValue(true);
 
         // Verificación para debugging
-        System.out.println("Categoría seleccionada: " + categoria);
-        System.out.println("Dificultad seleccionada: " + dificultad);
+        System.out.println("DEBUG: ViewModel - Categoría seleccionada: " + categoria);
+        System.out.println("DEBUG: ViewModel - Cantidad seleccionada: " + cantidad);
+        System.out.println("DEBUG: ViewModel - Dificultad seleccionada: " + dificultad);
 
-        Integer categoryId = CATEGORY_MAP.get(categoria);
+        // Primero, verifica disponibilidad de preguntas para asegurarte de que hay suficientes
+        Integer categoryId = null;
+        for (Map.Entry<String, Integer> entry : CATEGORY_MAP.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(categoria)) {
+                categoryId = entry.getValue();
+                break;
+            }
+        }
+
         if (categoryId == null) {
-            // Si no encuentra la categoría exacta, intentamos buscar con trim()
-            for (Map.Entry<String, Integer> entry : CATEGORY_MAP.entrySet()) {
-                if (entry.getKey().equalsIgnoreCase(categoria.trim())) {
-                    categoryId = entry.getValue();
-                    break;
-                }
-            }
-
-            if (categoryId == null) {
-                error.setValue("Categoría no válida: " + categoria);
-                isLoading.setValue(false);
-                return;
-            }
+            System.out.println("DEBUG: ViewModel - Categoría no válida: " + categoria);
+            error.setValue("Categoría no válida: " + categoria);
+            isLoading.setValue(false);
+            return;
         }
 
         String difficultyStr = DIFFICULTY_MAP.get(dificultad.toLowerCase());
         if (difficultyStr == null) {
+            System.out.println("DEBUG: ViewModel - Dificultad no válida: " + dificultad);
             error.setValue("Dificultad no válida: " + dificultad);
             isLoading.setValue(false);
             return;
         }
 
+        // Hacer la solicitud final
         TriviaService service = RetrofitClient.getClient().create(TriviaService.class);
         Call<TriviaResponse> call = service.getTrivia(cantidad, categoryId, difficultyStr, "boolean");
 
         // Log para debugging
-        System.out.println("URL de la llamada: " + call.request().url());
+        System.out.println("DEBUG: ViewModel - URL de la llamada: " + call.request().url());
 
         call.enqueue(new Callback<TriviaResponse>() {
             @Override
             public void onResponse(Call<TriviaResponse> call, Response<TriviaResponse> response) {
                 isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    triviaQuestions.setValue(response.body().getResults());
+                    TriviaResponse triviaResponse = response.body();
+                    System.out.println("DEBUG: ViewModel - Respuesta exitosa, código: " + triviaResponse.getResponse_code());
 
-                    // Inicializar contadores y configurar preguntas sin responder
-                    respuestasCorrectas = 0;
-                    respuestasIncorrectas = 0;
-                    respuestasSinResponder = response.body().getResults().size();
+                    // Imprimir la URL completa de nuevo para debugging
+                    System.out.println("DEBUG: ViewModel - URL de la respuesta: " + call.request().url());
+
+                    // Manejar específicamente el código de respuesta 1 (No Results)
+                    if (triviaResponse.getResponse_code() != 0) {
+                        System.out.println("DEBUG: ViewModel - Respuesta no exitosa (código " + triviaResponse.getResponse_code() + ")");
+                        // Corregir los mapeos de códigos de respuesta
+                        String errorMessage;
+                        switch (triviaResponse.getResponse_code()) {
+                            case 1:
+                                errorMessage = "No hay suficientes preguntas para esta categoría/dificultad. Intenta con otra combinación o menor cantidad.";
+                                break;
+                            case 2:
+                                errorMessage = "Parámetro de consulta inválido. Verifica la categoría o dificultad.";
+                                break;
+                            default:
+                                errorMessage = "Error desconocido al obtener preguntas (código " + triviaResponse.getResponse_code() + ").";
+                        }
+                        error.setValue(errorMessage);
+                        return;
+                    }
+
+
+                    if (triviaResponse.getResults() != null && !triviaResponse.getResults().isEmpty()) {
+                        System.out.println("DEBUG: ViewModel - Número de preguntas recibidas: " + triviaResponse.getResults().size());
+                        triviaQuestions.setValue(triviaResponse.getResults());
+
+                        // Inicializar contadores y configurar preguntas sin responder
+                        respuestasCorrectas = 0;
+                        respuestasIncorrectas = 0;
+                        respuestasSinResponder = triviaResponse.getResults().size();
+                    } else {
+                        System.out.println("DEBUG: ViewModel - No se recibieron preguntas en la respuesta");
+                        error.setValue("No se recibieron preguntas. Intenta con otra categoría o cantidad.");
+                    }
                 } else {
-                    error.setValue("Error al obtener preguntas: " + response.message());
+                    System.out.println("DEBUG: ViewModel - Error en la respuesta: " + response.message());
+                    System.out.println("DEBUG: ViewModel - Código de respuesta HTTP: " + response.code());
+
+                    // Manejo específico para error 429 (Too Many Requests)
+                    if (response.code() == 429) {
+                        error.setValue("Has alcanzado el límite de solicitudes a la API. Por favor, espera unos minutos antes de intentar nuevamente.");
+                    } else {
+                        error.setValue("Error al obtener preguntas: " + response.message());
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<TriviaResponse> call, Throwable t) {
                 isLoading.setValue(false);
+                System.out.println("DEBUG: ViewModel - Error de conexión: " + t.getMessage());
+                t.printStackTrace();
                 error.setValue("Error de conexión: " + t.getMessage());
             }
         });

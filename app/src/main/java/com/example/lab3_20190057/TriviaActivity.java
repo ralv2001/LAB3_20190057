@@ -47,7 +47,7 @@ public class TriviaActivity extends AppCompatActivity {
         // Inicializar componentes UI
         tvTimer = findViewById(R.id.tv_timer);
         tvNumeroPregunta = findViewById(R.id.tvNumeroPregunta);
-        tvPregunta = findViewById(R.id.tvPregunta);
+        tvPregunta = findViewById(R.id.tvPregunta);  // Asegúrate de que esta línea existe
         rgRespuesta = findViewById(R.id.rgRespuestaUsuario);
         rbTrue = findViewById(R.id.rbTrue);
         rbFalse = findViewById(R.id.rbFalse);
@@ -58,6 +58,11 @@ public class TriviaActivity extends AppCompatActivity {
             categoria = getIntent().getStringExtra("CATEGORIA");
             cantidad = getIntent().getIntExtra("CANTIDAD", 5);
             dificultad = getIntent().getStringExtra("DIFICULTAD");
+
+            // Agregar estos logs de depuración
+            System.out.println("DEBUG: TriviaActivity onCreate - Categoría: " + categoria);
+            System.out.println("DEBUG: TriviaActivity onCreate - Cantidad: " + cantidad);
+            System.out.println("DEBUG: TriviaActivity onCreate - Dificultad: " + dificultad);
 
             TextView categoriaPreguntas = findViewById(R.id.tvCategoriaPreguntas);
             categoriaPreguntas.setText(categoria + " Knowledge");
@@ -92,6 +97,10 @@ public class TriviaActivity extends AppCompatActivity {
         viewModel.getError().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                // Volver a la actividad principal después de un error
+                new android.os.Handler().postDelayed(() -> {
+                    finish();
+                }, 3000); // Esperar 3 segundos para que el usuario vea el mensaje
             }
         });
 
@@ -109,15 +118,33 @@ public class TriviaActivity extends AppCompatActivity {
         viewModel.obtenerPreguntas(categoria, cantidad, dificultad);
     }
 
+// Reemplaza el método mostrarPregunta en TriviaActivity.java con esta versión mejorada
+
     private void mostrarPregunta(int index) {
+        System.out.println("DEBUG: mostrarPregunta - index: " + index);
+        System.out.println("DEBUG: mostrarPregunta - preguntas: " + (preguntas != null ? preguntas.size() : "null"));
+
         if (preguntas != null && index < preguntas.size()) {
             TriviaResponse.TriviaQuestion pregunta = preguntas.get(index);
             tvNumeroPregunta.setText("Pregunta " + (index + 1) + "/" + preguntas.size());
-            tvPregunta.setText(Html.fromHtml(pregunta.getQuestion(), Html.FROM_HTML_MODE_LEGACY));
+
+            // Debug para ver la pregunta recibida
+            System.out.println("DEBUG: Pregunta recibida: " + pregunta.getQuestion());
+
+            // Decodificar HTML entities
+            String preguntaTexto = Html.fromHtml(pregunta.getQuestion(), Html.FROM_HTML_MODE_LEGACY).toString();
+            tvPregunta.setText(preguntaTexto);
 
             // Resetear selección de radio button
             rgRespuesta.clearCheck();
             btnSiguiente.setEnabled(false);
+        } else {
+            System.out.println("DEBUG: Error en mostrarPregunta - preguntas null o index fuera de rango");
+            if (preguntas == null) {
+                System.out.println("DEBUG: preguntas es NULL");
+            } else {
+                System.out.println("DEBUG: index=" + index + ", preguntas.size=" + preguntas.size());
+            }
         }
     }
 
@@ -179,11 +206,39 @@ public class TriviaActivity extends AppCompatActivity {
         finish();
     }
 
+    // Añade estos métodos al final de la clase TriviaActivity.java (justo antes del último corchete)
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // No cancelamos el timer aquí para que siga corriendo
+        // cuando se rota la pantalla o se cambia entre aplicaciones
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Aquí podríamos actualizar la UI si fuera necesario
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (timer != null) {
             timer.cancel();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // No necesitamos hacer nada especial aquí, ya que queremos mantener el estado actual
+        System.out.println("DEBUG: onConfigurationChanged - Orientación cambiada");
+
+        // Actualizar la UI si es necesario
+        if (preguntas != null && preguntaActual < preguntas.size()) {
+            // Asegurarse de que la pregunta actual se siga mostrando correctamente
+            tvNumeroPregunta.setText("Pregunta " + (preguntaActual + 1) + "/" + preguntas.size());
         }
     }
 }
