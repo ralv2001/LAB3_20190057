@@ -8,6 +8,7 @@ import com.example.lab3_20190057.network.RetrofitClient;
 import com.example.lab3_20190057.network.TriviaResponse;
 import com.example.lab3_20190057.network.TriviaService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,13 +105,16 @@ public class TriviaViewModel extends ViewModel {
                         String errorMessage;
                         switch (triviaResponse.getResponse_code()) {
                             case 1:
-                                errorMessage = "No hay suficientes preguntas para esta categoría/dificultad. Intenta con otra combinación o menor cantidad.";
+                                errorMessage = "No hay suficientes preguntas para esta categoría/dificultad. Usando modo sin conexión.";
+                                provideFallbackQuestions(categoria, cantidad, dificultad);
                                 break;
                             case 2:
-                                errorMessage = "Parámetro de consulta inválido. Verifica la categoría o dificultad.";
+                                errorMessage = "Parámetro de consulta inválido. Usando modo sin conexión.";
+                                provideFallbackQuestions(categoria, cantidad, dificultad);
                                 break;
                             default:
-                                errorMessage = "Error desconocido al obtener preguntas (código " + triviaResponse.getResponse_code() + ").";
+                                errorMessage = "Error desconocido al obtener preguntas. Usando modo sin conexión.";
+                                provideFallbackQuestions(categoria, cantidad, dificultad);
                         }
                         error.setValue(errorMessage);
                         return;
@@ -126,8 +130,9 @@ public class TriviaViewModel extends ViewModel {
                         respuestasIncorrectas = 0;
                         respuestasSinResponder = triviaResponse.getResults().size();
                     } else {
-                        System.out.println("DEBUG: ViewModel - No se recibieron preguntas en la respuesta");
-                        error.setValue("No se recibieron preguntas. Intenta con otra categoría o cantidad.");
+                        System.out.println("DEBUG: ViewModel - No se recibieron preguntas en la respuesta. Usando modo sin conexión.");
+                        provideFallbackQuestions(categoria, cantidad, dificultad);
+                        error.setValue("No se recibieron preguntas. Usando modo sin conexión.");
                     }
                 } else {
                     System.out.println("DEBUG: ViewModel - Error en la respuesta: " + response.message());
@@ -135,9 +140,11 @@ public class TriviaViewModel extends ViewModel {
 
                     // Manejo específico para error 429 (Too Many Requests)
                     if (response.code() == 429) {
-                        error.setValue("Has alcanzado el límite de solicitudes a la API. Por favor, espera unos minutos antes de intentar nuevamente.");
+                        error.setValue("Has alcanzado el límite de solicitudes a la API. Usando modo sin conexión.");
+                        provideFallbackQuestions(categoria, cantidad, dificultad);
                     } else {
-                        error.setValue("Error al obtener preguntas: " + response.message());
+                        error.setValue("Error al obtener preguntas. Usando modo sin conexión.");
+                        provideFallbackQuestions(categoria, cantidad, dificultad);
                     }
                 }
             }
@@ -186,4 +193,88 @@ public class TriviaViewModel extends ViewModel {
     public int getRespuestasSinResponder() {
         return respuestasSinResponder;
     }
+
+    private void provideFallbackQuestions(String categoria, int cantidad, String dificultad) {
+        // Creamos algunas preguntas de ejemplo como fallback cuando la API no está disponible
+        List<TriviaResponse.TriviaQuestion> fallbackQuestions = new ArrayList<>();
+
+        // Añadimos algunas preguntas genéricas para cada categoría
+        if (cantidad > 0) {
+            TriviaResponse.TriviaQuestion q1 = new TriviaResponse.TriviaQuestion();
+            q1.setCategory(categoria);
+            q1.setType("boolean");
+            q1.setDifficulty(dificultad);
+            q1.setQuestion("La Tierra es el planeta más grande del Sistema Solar");
+            q1.setCorrect_answer("False");
+            List<String> incorrect1 = new ArrayList<>();
+            incorrect1.add("True");
+            q1.setIncorrect_answers(incorrect1);
+            fallbackQuestions.add(q1);
+        }
+
+        if (cantidad > 1) {
+            TriviaResponse.TriviaQuestion q2 = new TriviaResponse.TriviaQuestion();
+            q2.setCategory(categoria);
+            q2.setType("boolean");
+            q2.setDifficulty(dificultad);
+            q2.setQuestion("El agua hierve a 100 grados Celsius a nivel del mar");
+            q2.setCorrect_answer("True");
+            List<String> incorrect2 = new ArrayList<>();
+            incorrect2.add("False");
+            q2.setIncorrect_answers(incorrect2);
+            fallbackQuestions.add(q2);
+        }
+
+        if (cantidad > 2) {
+            TriviaResponse.TriviaQuestion q3 = new TriviaResponse.TriviaQuestion();
+            q3.setCategory(categoria);
+            q3.setType("boolean");
+            q3.setDifficulty(dificultad);
+            q3.setQuestion("La Gran Muralla China es visible desde el espacio");
+            q3.setCorrect_answer("False");
+            List<String> incorrect3 = new ArrayList<>();
+            incorrect3.add("True");
+            q3.setIncorrect_answers(incorrect3);
+            fallbackQuestions.add(q3);
+        }
+
+        if (cantidad > 3) {
+            TriviaResponse.TriviaQuestion q4 = new TriviaResponse.TriviaQuestion();
+            q4.setCategory(categoria);
+            q4.setType("boolean");
+            q4.setDifficulty(dificultad);
+            q4.setQuestion("El daltonismo es más común en mujeres que en hombres");
+            q4.setCorrect_answer("False");
+            List<String> incorrect4 = new ArrayList<>();
+            incorrect4.add("True");
+            q4.setIncorrect_answers(incorrect4);
+            fallbackQuestions.add(q4);
+        }
+
+        if (cantidad > 4) {
+            TriviaResponse.TriviaQuestion q5 = new TriviaResponse.TriviaQuestion();
+            q5.setCategory(categoria);
+            q5.setType("boolean");
+            q5.setDifficulty(dificultad);
+            q5.setQuestion("Los tomates son una fruta");
+            q5.setCorrect_answer("True");
+            List<String> incorrect5 = new ArrayList<>();
+            incorrect5.add("False");
+            q5.setIncorrect_answers(incorrect5);
+            fallbackQuestions.add(q5);
+        }
+
+        // Limitar al número de preguntas solicitado
+        List<TriviaResponse.TriviaQuestion> limitedQuestions =
+                fallbackQuestions.subList(0, Math.min(cantidad, fallbackQuestions.size()));
+
+        // Actualizar el LiveData con las preguntas de fallback
+        triviaQuestions.setValue(limitedQuestions);
+
+        // Inicializar contadores
+        respuestasCorrectas = 0;
+        respuestasIncorrectas = 0;
+        respuestasSinResponder = limitedQuestions.size();
+    }
+
 }

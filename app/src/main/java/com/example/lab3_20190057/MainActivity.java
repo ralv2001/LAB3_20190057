@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
     private void verificarDisponibilidadPreguntas(String categoria, int cantidad, String dificultad) {
         // Mostrar un diálogo de carga
         ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Verificando disponibilidad de preguntas...");
+        progressDialog.setMessage("Iniciando trivia...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
@@ -242,115 +242,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Crear una copia final del ID de categoría para usar en callbacks
-        final Integer finalCategoryId = categoryId;
-
-        // Mapear la dificultad a inglés para la API
-        String difficultyStr = "";
-        if (dificultad.equalsIgnoreCase("fácil")) {
-            difficultyStr = "easy";
-        } else if (dificultad.equalsIgnoreCase("medio")) {
-            difficultyStr = "medium";
-        } else if (dificultad.equalsIgnoreCase("difícil")) {
-            difficultyStr = "hard";
-        }
-
-        // Crear una copia final para usar en callbacks
-        final String finalDifficultyStr = difficultyStr;
-
-        // PRIMERO: Verificar REALMENTE cuántas preguntas hay disponibles
-        TriviaService service = RetrofitClient.getClient().create(TriviaService.class);
-        Call<CategoryCountResponse> countCall = service.getCategoryCounts(finalCategoryId);
-
-
-        countCall.enqueue(new Callback<CategoryCountResponse>() {
-            @Override
-            public void onResponse(Call<CategoryCountResponse> call, Response<CategoryCountResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    CategoryCountResponse countResponse = response.body();
-                    int disponibles = 0;
-
-                    // Determinar el número de preguntas disponibles según la dificultad
-                    if (dificultad.equalsIgnoreCase("fácil")) {
-                        disponibles = countResponse.getCategory_question_count().getTotal_easy_question_count();
-                    } else if (dificultad.equalsIgnoreCase("medio")) {
-                        disponibles = countResponse.getCategory_question_count().getTotal_medium_question_count();
-                    } else if (dificultad.equalsIgnoreCase("difícil")) {
-                        disponibles = countResponse.getCategory_question_count().getTotal_hard_question_count();
-                    }
-
-                    System.out.println("=====================================================");
-                    System.out.println("DEBUG: API de conteo - Preguntas disponibles para " + categoria +
-                            " en " + dificultad + ": " + disponibles);
-                    System.out.println("DEBUG: ¿Y cuántas son boolean? Vamos a verificar directamente");
-
-
-                    // Ahora, vamos a VERIFICAR realmente obteniendo preguntas
-                    Call<TriviaResponse> call2 = service.getTrivia(cantidad, finalCategoryId, finalDifficultyStr, "boolean");
-
-                    System.out.println("DEBUG: URL de verificación: " + call2.request().url());
-
-                    call2.enqueue(new Callback<TriviaResponse>() {
-                        @Override
-                        public void onResponse(Call<TriviaResponse> call, Response<TriviaResponse> response) {
-                            progressDialog.dismiss();
-
-                            if (response.isSuccessful() && response.body() != null) {
-                                TriviaResponse triviaResponse = response.body();
-                                System.out.println("DEBUG: Código de respuesta API: " + triviaResponse.getResponse_code());
-
-                                System.out.println("=====================================================");
-                                System.out.println("DEBUG: Resultado de getTrivia:");
-                                System.out.println("DEBUG: Código de respuesta API: " + triviaResponse.getResponse_code());
-                                if (triviaResponse.getResults() != null) {
-                                    System.out.println("DEBUG: Cantidad de preguntas tipo boolean obtenidas: " + triviaResponse.getResults().size());
-                                } else {
-                                    System.out.println("DEBUG: No se obtuvo ninguna pregunta (results=null)");
-                                }
-
-                                if (triviaResponse.getResponse_code() == 0 && triviaResponse.getResults() != null &&
-                                        triviaResponse.getResults().size() >= cantidad) {
-                                    // Si la respuesta es exitosa y hay suficientes preguntas, iniciar el juego
-                                    iniciarJuego(categoria, cantidad, dificultad);
-                                } else {
-                                    // Si no hay suficientes preguntas, mostrar un mensaje de error
-                                    String mensaje = "No hay suficientes preguntas de tipo Verdadero/Falso disponibles para " +
-                                            categoria + " en dificultad " + dificultad +
-                                            ". Intenta con otra combinación o menos preguntas.";
-                                    Toast.makeText(MainActivity.this, mensaje, Toast.LENGTH_LONG).show();
-                                }
-                            } else {
-                                Toast.makeText(MainActivity.this,
-                                        "Error al verificar las preguntas disponibles. Intenta nuevamente.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<TriviaResponse> call, Throwable t) {
-                            progressDialog.dismiss();
-                            Toast.makeText(MainActivity.this,
-                                    "Error de conexión: " + t.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    // Error al obtener conteo
-                    progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this,
-                            "Error al verificar las preguntas disponibles. Intenta nuevamente.",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CategoryCountResponse> call, Throwable t) {
-                progressDialog.dismiss();
-                Toast.makeText(MainActivity.this,
-                        "Error de conexión: " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Iniciar juego directamente, ya que el ViewModel manejará la lógica de fallback
+        progressDialog.dismiss();
+        iniciarJuego(categoria, cantidad, dificultad);
     }
 
     private void iniciarJuego(String categoria, int cantidad, String dificultad) {

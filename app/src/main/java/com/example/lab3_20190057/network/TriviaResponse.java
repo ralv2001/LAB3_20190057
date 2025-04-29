@@ -22,6 +22,7 @@ public class TriviaResponse {
         private String correct_answer;
         private List<String> incorrect_answers;
 
+        // Getters originales
         public String getCategory() {
             return category;
         }
@@ -44,6 +45,31 @@ public class TriviaResponse {
 
         public List<String> getIncorrect_answers() {
             return incorrect_answers;
+        }
+
+        // Setters para usar en el modo fallback
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public void setDifficulty(String difficulty) {
+            this.difficulty = difficulty;
+        }
+
+        public void setQuestion(String question) {
+            this.question = question;
+        }
+
+        public void setCorrect_answer(String correct_answer) {
+            this.correct_answer = correct_answer;
+        }
+
+        public void setIncorrect_answers(List<String> incorrect_answers) {
+            this.incorrect_answers = incorrect_answers;
         }
     }
 }
