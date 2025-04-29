@@ -9,7 +9,7 @@ a la página principal, por favor, evitar manipular la app mientras salga ese to
 ## **Implementación de Hilos:**
 En este proyecto se han implementado hilos de las siguientes maneras:
 1. CountDownTimer para el temporizador, el cual see utiliza la clase CountDownTimer que implementa un hilo separado para mantener el contador de tiempo funcionando de manera independiente a la interfaz de usuario.
-2. Llamadas asíncronas a la API con Retrofit, donde también se utilizan hilos en segundo plano para realizar las solicitudes a la API OpenTrivia mediante Retrofit, con el método "enqueue()" que opera de forma asíncrona:
+2. Llamadas asíncronas a la API con Retrofit, donde también se utilizan hilos en segundo plano para realizar las solicitudes a la API OpenTrivia mediante Retrofit, con el método "enqueue()" que opera de forma asíncrona.
 
 ## **Información del Proyecto:** 
 La versión de Android utilizada es:  
