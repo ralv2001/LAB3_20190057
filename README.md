@@ -1,6 +1,11 @@
 # LAB3_20190057 - **RICARDO ALVARADO RUIZ**
 Este es mi laboratorio 3 :)
 
+## **Importante:**
+La API tiene un número limitado de preguntas tipo Boolean para ciertos rubros y ciertas dificultades.
+En caso no se encuentre la suficiente cantidad de preguntas, el código regresará automáticamente
+a la página principal, por favor, evitar manipular la app mientras salga ese toast
+
 ## **Información del Proyecto:** 
 La versión de Android utilizada es:  
 **API 31 ("S", Android 12.0)**
