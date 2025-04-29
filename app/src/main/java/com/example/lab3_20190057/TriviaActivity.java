@@ -152,6 +152,8 @@ public class TriviaActivity extends AppCompatActivity {
             timer.cancel();
         }
 
+        // Se utiliza CountDownTimer que implementa hilos para mantener el contador
+        // funcionando independientemente de las acciones de UI o rotación de pantalla
         timer = new CountDownTimer(segundos * 1000L, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -208,8 +210,6 @@ public class TriviaActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // No cancelamos el timer aquí para que siga corriendo
-        // cuando se rota la pantalla o se cambia entre aplicaciones
     }
 
     @Override
@@ -229,7 +229,6 @@ public class TriviaActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // No necesitamos hacer nada especial aquí, ya que queremos mantener el estado actual
         System.out.println("DEBUG: onConfigurationChanged - Orientación cambiada");
 
         // Actualizar la UI si es necesario
