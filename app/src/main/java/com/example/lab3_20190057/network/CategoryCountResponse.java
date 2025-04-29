@@ -1,4 +1,3 @@
-// Crear esta nueva clase en el paquete network
 package com.example.lab3_20190057.network;
 
 public class CategoryCountResponse {

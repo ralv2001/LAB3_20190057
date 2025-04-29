@@ -1,5 +1,3 @@
-// Reemplaza completamente el archivo RetrofitClient.java con este contenido
-
 package com.example.lab3_20190057.network;
 
 import com.google.gson.Gson;

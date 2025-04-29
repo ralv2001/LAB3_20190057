@@ -118,7 +118,6 @@ public class TriviaActivity extends AppCompatActivity {
         viewModel.obtenerPreguntas(categoria, cantidad, dificultad);
     }
 
-// Reemplaza el método mostrarPregunta en TriviaActivity.java con esta versión mejorada
 
     private void mostrarPregunta(int index) {
         System.out.println("DEBUG: mostrarPregunta - index: " + index);
@@ -205,8 +204,6 @@ public class TriviaActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-    // Añade estos métodos al final de la clase TriviaActivity.java (justo antes del último corchete)
 
     @Override
     protected void onPause() {

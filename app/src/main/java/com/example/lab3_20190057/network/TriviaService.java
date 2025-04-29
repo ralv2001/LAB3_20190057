@@ -13,7 +13,6 @@ public interface TriviaService {
             @Query("type") String type
     );
 
-    // Dejamos este método para compatibilidad, aunque ya no lo usaremos directamente
     @GET("api_count.php")
     Call<CategoryCountResponse> getCategoryCounts(@Query("category") int category);
 }
